@@ -84,40 +84,34 @@ extension NewsAppPresenterImpl: NewsAppPresenter {
 
                 let newArticles = self?.filterArticlesFromAPI(articles: articles, keyword: keyword) ?? []
                 
-                if isSearchQueryNew {
-                    self?.allNews = newArticles
-                    DispatchQueue.main.async {
-                        self?.view?.showNews(news: newArticles)
+                if !newArticles.isEmpty {
+                    if isSearchQueryNew {
+                        self?.allNews.append(contentsOf: newArticles)
+                        DispatchQueue.main.async {
+                            self?.view?.showNews(news: self?.allNews ?? [])
+                        }
+                    } else {
+                        self?.allNews.append(contentsOf: newArticles)
+                        DispatchQueue.main.async {
+                            self?.view?.loadMoreNews(news: newArticles)
+                        }
                     }
-                }
-                else{
-                    self?.allNews.append(contentsOf: newArticles)
-                    DispatchQueue.main.async {
-                        self?.view?.loadMoreNews(news: newArticles)
-                    }
-                }
-
-                if !newArticles.isEmpty
-                {
                     self?.saveArticles(newArticles: newArticles, keyword: keyword)
                 }
                                 
             case .failure(let failure):
-                let savedArticles = self?.getArticles(keyword: keyword, page: self?.page ?? 1, pageSize: self?.pageSize ?? 20) ?? []
-                
-                if isSearchQueryNew {
+                if self?.allNews.isEmpty == true {
+                    let savedArticles = self?.getArticles(
+                        keyword: keyword,
+                        page: self?.page ?? 1,
+                        pageSize: self?.pageSize ?? 20
+                    ) ?? []
+
                     self?.allNews = savedArticles
                     DispatchQueue.main.async {
                         self?.view?.showNews(news: savedArticles)
                     }
                 }
-                else{
-                    self?.allNews.append(contentsOf: savedArticles)
-                    DispatchQueue.main.async {
-                        self?.view?.loadMoreNews(news: savedArticles)
-                    }
-                }
-                
                 print(failure)
             }
         }
@@ -149,6 +143,7 @@ extension NewsAppPresenterImpl: NewsAppPresenter {
             article.urlToImage_ = articleFromAPI.urlToImage
             article.author_ = articleFromAPI.author
             article.description_ = articleFromAPI.description
+            article.url_ = articleFromAPI.url
             article.category_ = ""
             article.keyword_ = keyword
         }
@@ -182,6 +177,7 @@ extension NewsAppPresenterImpl: NewsAppPresenter {
                 newArticle.title = article.title_ ?? ""
                 newArticle.urlToImage = article.urlToImage_ ?? ""
                 newArticle.description = article.description_ ?? ""
+                newArticle.url = article.url_ ?? ""
                 
                 savedArticles.append(newArticle)
             }

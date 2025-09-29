@@ -97,21 +97,19 @@ extension CategoriesPresenterImpl: CategoriesPresenter {
                 
                 let newArticles = self?.filterArticlesFromAPI(articles: articles, category: about) ?? []
                 
-                if isSearchQueryNew {
-                    self?.allNews = newArticles
-                    DispatchQueue.main.async {
-                        self?.view?.showNews(news: newArticles)
-                    }
-                }
-                else{
-                    self?.allNews.append(contentsOf: newArticles)
-                    DispatchQueue.main.async {
-                        self?.view?.loadMoreNews(news: newArticles)
-                    }
-                }
                 
-                if !newArticles.isEmpty
-                {
+                if !newArticles.isEmpty {
+                    if isSearchQueryNew {
+                        self?.allNews.append(contentsOf: newArticles)
+                        DispatchQueue.main.async {
+                            self?.view?.showNews(news: self?.allNews ?? [])
+                        }
+                    } else {
+                        self?.allNews.append(contentsOf: newArticles)
+                        DispatchQueue.main.async {
+                            self?.view?.loadMoreNews(news: newArticles)
+                        }
+                    }
                     self?.saveArticles(newArticles: newArticles, category: about)
                 }
                 
@@ -149,6 +147,7 @@ extension CategoriesPresenterImpl: CategoriesPresenter {
             article.description_ = articleFromAPI.description
             article.category_ = category
             article.keyword_ = ""
+            article.url_ = articleFromAPI.url
         }
         
         coreDataService.saveContext { isSuccess in
@@ -180,6 +179,7 @@ extension CategoriesPresenterImpl: CategoriesPresenter {
                 newArticle.title = article.title_ ?? ""
                 newArticle.urlToImage = article.urlToImage_ ?? ""
                 newArticle.description = article.description_ ?? ""
+                newArticle.url = article.url_ ?? ""
                 
                 savedArticles.append(newArticle)
             }
