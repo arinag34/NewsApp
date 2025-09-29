@@ -19,6 +19,12 @@ final class CategoriesViewControllerImpl: UIViewController {
     private let presenter: CategoriesPresenter
     private var news: [Article] = []
     
+    private lazy var buttonContainer: UIView = {
+        $0.translatesAutoresizingMaskIntoConstraints = false
+        
+        return $0
+    }(UIView())
+    
     private lazy var backButton: UIButton = {
         $0.setTitle("<- Back to Main", for: .normal)
         $0.setTitleColor(#colorLiteral(red: 0.1294117719, green: 0.2156862766, blue: 0.06666667014, alpha: 1), for: .normal)
@@ -77,7 +83,7 @@ final class CategoriesViewControllerImpl: UIViewController {
         button.setTitleColor(#colorLiteral(red: 0.1294117719, green: 0.2156862766, blue: 0.06666667014, alpha: 1), for: .normal)
         button.backgroundColor = #colorLiteral(red: 0.721568644, green: 0.8862745166, blue: 0.5921568871, alpha: 1)
         button.layer.cornerRadius = 16
-        button.contentEdgeInsets = UIEdgeInsets(top: 10, left: 20, bottom: 10, right: 20)
+        button.contentEdgeInsets = UIEdgeInsets(top: 3, left: 5, bottom: 3, right: 5)
         
         let buttonAction = UIAction { [weak self] _ in
                      self?.showNewsFromChosenCategoryAction(button)
@@ -108,12 +114,97 @@ final class CategoriesViewControllerImpl: UIViewController {
         generalButton.backgroundColor = #colorLiteral(red: 0.9098039269, green: 0.4784313738, blue: 0.6431372762, alpha: 1)
         noNewsLabel.isHidden = true
         presenter.viewDidLoad()
-        setupUI()
-    }
-
-    private func setupUI() {
-        view.addSubview(backButton)
         
+        if(view.bounds.width < view.bounds.height){
+            setupUI()
+        }
+        else{
+            setupLandscapeUI()
+        }
+    }
+    
+    lazy var portraitConstraints: [NSLayoutConstraint] = [
+        backButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+        backButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
+        
+        generalButton.topAnchor.constraint(equalTo: backButton.bottomAnchor, constant: 8),
+        generalButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 75),
+        
+        healthButton.topAnchor.constraint(equalTo: generalButton.topAnchor),
+        healthButton.leadingAnchor.constraint(equalTo: generalButton.trailingAnchor, constant: 8),
+        
+        scienceButton.topAnchor.constraint(equalTo: generalButton.topAnchor),
+        scienceButton.leadingAnchor.constraint(equalTo: healthButton.trailingAnchor, constant: 8),
+        
+        sportsButton.topAnchor.constraint(equalTo: generalButton.bottomAnchor, constant: 8),
+        sportsButton.leadingAnchor.constraint(equalTo: generalButton.leadingAnchor),
+        
+        technologyButton.topAnchor.constraint(equalTo: sportsButton.topAnchor),
+        technologyButton.leadingAnchor.constraint(equalTo: sportsButton.trailingAnchor, constant: 8),
+        
+        businessButton.topAnchor.constraint(equalTo: sportsButton.topAnchor),
+        businessButton.leadingAnchor.constraint(equalTo: technologyButton.trailingAnchor, constant: 8),
+        
+        entertainmentButton.topAnchor.constraint(equalTo: sportsButton.bottomAnchor, constant: 8),
+        entertainmentButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+        
+        newsTable.topAnchor.constraint(equalTo: entertainmentButton.bottomAnchor, constant: 10),
+        newsTable.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+        newsTable.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+        newsTable.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: 8),
+        
+        noNewsLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+        noNewsLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+        noNewsLabel.widthAnchor.constraint(equalToConstant: 250),
+        
+        newsLoader.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
+        newsLoader.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+    ]
+    
+    lazy var landscapeConstraints: [NSLayoutConstraint] = [
+        backButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+        backButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
+        
+        buttonContainer.topAnchor.constraint(equalTo: backButton.bottomAnchor, constant: 8),
+        buttonContainer.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+        buttonContainer.widthAnchor.constraint(equalToConstant: 150),
+        buttonContainer.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
+        
+        generalButton.topAnchor.constraint(equalTo: buttonContainer.topAnchor, constant: 8),
+        generalButton.leadingAnchor.constraint(equalTo: buttonContainer.leadingAnchor),
+        
+        healthButton.topAnchor.constraint(equalTo: generalButton.bottomAnchor, constant: 5),
+        healthButton.leadingAnchor.constraint(equalTo: buttonContainer.leadingAnchor),
+        
+        scienceButton.topAnchor.constraint(equalTo: healthButton.bottomAnchor, constant: 5),
+        scienceButton.leadingAnchor.constraint(equalTo: buttonContainer.leadingAnchor),
+        
+        sportsButton.topAnchor.constraint(equalTo: scienceButton.bottomAnchor, constant: 8),
+        sportsButton.leadingAnchor.constraint(equalTo: buttonContainer.leadingAnchor),
+        
+        technologyButton.topAnchor.constraint(equalTo: sportsButton.bottomAnchor, constant: 8),
+        technologyButton.leadingAnchor.constraint(equalTo: buttonContainer.leadingAnchor),
+        
+        businessButton.topAnchor.constraint(equalTo: technologyButton.bottomAnchor, constant: 8),
+        businessButton.leadingAnchor.constraint(equalTo: buttonContainer.leadingAnchor),
+        
+        entertainmentButton.topAnchor.constraint(equalTo: businessButton.bottomAnchor, constant: 8),
+        entertainmentButton.leadingAnchor.constraint(equalTo: buttonContainer.leadingAnchor),
+        
+        newsTable.topAnchor.constraint(equalTo: buttonContainer.topAnchor),
+        newsTable.leadingAnchor.constraint(equalTo: buttonContainer.trailingAnchor, constant: 10),
+        newsTable.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+        newsTable.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: 8),
+        
+        noNewsLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+        noNewsLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+        noNewsLabel.widthAnchor.constraint(equalToConstant: 250),
+        
+        newsLoader.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
+        newsLoader.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+    ]
+    
+    private func setupUI() {
         view.addSubview(generalButton)
         view.addSubview(healthButton)
         view.addSubview(scienceButton)
@@ -122,48 +213,46 @@ final class CategoriesViewControllerImpl: UIViewController {
         view.addSubview(businessButton)
         view.addSubview(entertainmentButton)
         
+        view.addSubview(backButton)
         view.addSubview(newsTable)
         view.addSubview(noNewsLabel)
         view.addSubview(newsLoader)
         
-        NSLayoutConstraint.activate([
-            backButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            backButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
-            
-            generalButton.topAnchor.constraint(equalTo: backButton.bottomAnchor, constant: 8),
-            generalButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 25),
-            
-            healthButton.topAnchor.constraint(equalTo: generalButton.topAnchor),
-            healthButton.leadingAnchor.constraint(equalTo: generalButton.trailingAnchor, constant: 8),
-            
-            scienceButton.topAnchor.constraint(equalTo: generalButton.topAnchor),
-            scienceButton.leadingAnchor.constraint(equalTo: healthButton.trailingAnchor, constant: 8),
-            
-            sportsButton.topAnchor.constraint(equalTo: generalButton.bottomAnchor, constant: 8),
-            sportsButton.leadingAnchor.constraint(equalTo: generalButton.leadingAnchor),
-            
-            technologyButton.topAnchor.constraint(equalTo: sportsButton.topAnchor),
-            technologyButton.leadingAnchor.constraint(equalTo: sportsButton.trailingAnchor, constant: 8),
-            
-            businessButton.topAnchor.constraint(equalTo: sportsButton.topAnchor),
-            businessButton.leadingAnchor.constraint(equalTo: technologyButton.trailingAnchor, constant: 8),
-            
-            entertainmentButton.topAnchor.constraint(equalTo: sportsButton.bottomAnchor, constant: 8),
-            entertainmentButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            
-            newsTable.topAnchor.constraint(equalTo: entertainmentButton.bottomAnchor, constant: 10),
-            newsTable.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            newsTable.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            newsTable.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: 8),
-            
-            noNewsLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            noNewsLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            noNewsLabel.widthAnchor.constraint(equalToConstant: 250),
-            
-            newsLoader.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
-            newsLoader.centerXAnchor.constraint(equalTo: view.centerXAnchor)
-        ])
+        NSLayoutConstraint.deactivate(landscapeConstraints)
+        NSLayoutConstraint.activate(portraitConstraints)
     }
+
+    private func setupLandscapeUI() {
+        view.addSubview(buttonContainer)
+        
+        buttonContainer.addSubview(generalButton)
+        buttonContainer.addSubview(healthButton)
+        buttonContainer.addSubview(scienceButton)
+        buttonContainer.addSubview(sportsButton)
+        buttonContainer.addSubview(technologyButton)
+        buttonContainer.addSubview(businessButton)
+        buttonContainer.addSubview(entertainmentButton)
+        
+        view.addSubview(backButton)
+        view.addSubview(newsTable)
+        view.addSubview(noNewsLabel)
+        view.addSubview(newsLoader)
+        NSLayoutConstraint.deactivate(portraitConstraints)
+        NSLayoutConstraint.activate(landscapeConstraints)
+    }
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        
+        coordinator.animate(alongsideTransition: { _ in
+            if (size.width > size.height) {
+                self.setupLandscapeUI()
+            } else {
+                self.setupUI()
+            }
+        })
+    }
+
     
     private func showNewsFromChosenCategoryAction(_ sender: UIButton) {
         for button in buttons {
