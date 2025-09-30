@@ -31,6 +31,7 @@ final class CoreDataService {
                 completion(true)
             } catch {
                 let nserror = error as NSError
+                print(nserror)
                 completion(false)
             }
         }

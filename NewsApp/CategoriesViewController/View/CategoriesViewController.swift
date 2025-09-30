@@ -26,13 +26,17 @@ final class CategoriesViewControllerImpl: UIViewController {
     }(UIView())
     
     private lazy var backButton: UIButton = {
-        $0.setTitle("<- Back to Main", for: .normal)
-        $0.setTitleColor(#colorLiteral(red: 0.1294117719, green: 0.2156862766, blue: 0.06666667014, alpha: 1), for: .normal)
-        $0.titleLabel?.font = .systemFont(ofSize: 22, weight: .bold)
+        var configuration = UIButton.Configuration.plain()
+        
+        configuration.attributedTitle = AttributedString("<- Back to Main")
+        configuration.attributedTitle?.font = .systemFont(ofSize: 22, weight: .bold)
+        configuration.baseForegroundColor = #colorLiteral(red: 0.1294117719, green: 0.2156862766, blue: 0.06666667014, alpha: 1)
         
         let buttonAction = UIAction { [weak self] _ in
             self?.navigationController?.popViewController(animated: true)
         }
+        
+        $0.configuration = configuration
         
         $0.addAction(buttonAction, for: .touchUpInside)
         
@@ -79,15 +83,19 @@ final class CategoriesViewControllerImpl: UIViewController {
     
     private func createCategoryButton(title: String) -> UIButton {
         let button = UIButton()
-        button.setTitle(title, for: .normal)
-        button.setTitleColor(#colorLiteral(red: 0.1294117719, green: 0.2156862766, blue: 0.06666667014, alpha: 1), for: .normal)
-        button.backgroundColor = #colorLiteral(red: 0.721568644, green: 0.8862745166, blue: 0.5921568871, alpha: 1)
-        button.layer.cornerRadius = 16
-        button.contentEdgeInsets = UIEdgeInsets(top: 3, left: 5, bottom: 3, right: 5)
+        var configuration = UIButton.Configuration.filled()
+        
+        configuration.title = title
+        configuration.baseBackgroundColor = #colorLiteral(red: 0.721568644, green: 0.8862745166, blue: 0.5921568871, alpha: 1)
+        configuration.baseForegroundColor = #colorLiteral(red: 0.1294117719, green: 0.2156862766, blue: 0.06666667014, alpha: 1)
+        configuration.cornerStyle = .large
+        configuration.contentInsets = NSDirectionalEdgeInsets(top: 3, leading: 5, bottom: 3, trailing: 5)
         
         let buttonAction = UIAction { [weak self] _ in
                      self?.showNewsFromChosenCategoryAction(button)
                 }
+        
+        button.configuration = configuration
         
         button.addAction(buttonAction, for: .touchUpInside)
         
@@ -111,7 +119,7 @@ final class CategoriesViewControllerImpl: UIViewController {
         self.navigationItem.setHidesBackButton(true, animated:true)
         self.title = "Categories"
         view.backgroundColor = #colorLiteral(red: 0.973554194, green: 1, blue: 0.9483045936, alpha: 1)
-        generalButton.backgroundColor = #colorLiteral(red: 0.9098039269, green: 0.4784313738, blue: 0.6431372762, alpha: 1)
+        generalButton.configuration?.baseBackgroundColor = #colorLiteral(red: 1, green: 0.5616251826, blue: 0.753698051, alpha: 1)
         noNewsLabel.isHidden = true
         presenter.viewDidLoad()
         
@@ -256,9 +264,9 @@ final class CategoriesViewControllerImpl: UIViewController {
     
     private func showNewsFromChosenCategoryAction(_ sender: UIButton) {
         for button in buttons {
-            button.backgroundColor = #colorLiteral(red: 0.721568644, green: 0.8862745166, blue: 0.5921568871, alpha: 1)
+            button.configuration?.baseBackgroundColor = #colorLiteral(red: 0.721568644, green: 0.8862745166, blue: 0.5921568871, alpha: 1)
         }
-        sender.backgroundColor = #colorLiteral(red: 0.9098039269, green: 0.4784313738, blue: 0.6431372762, alpha: 1)
+        sender.configuration?.baseBackgroundColor = #colorLiteral(red: 1, green: 0.5616251826, blue: 0.753698051, alpha: 1)
         presenter.searchNews(about: (sender.titleLabel?.text)!.lowercased())
     }
 }

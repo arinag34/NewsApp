@@ -30,14 +30,17 @@ final class NewsAppViewControllerImpl: UIViewController {
     }(UITableView())
     
     private lazy var browseCategoriesButton: UIButton = {
-        $0.setTitle("Browse categories", for: .normal)
-        $0.setTitleColor(#colorLiteral(red: 0.1294117719, green: 0.2156862766, blue: 0.06666667014, alpha: 1), for: .normal)
-        $0.backgroundColor = #colorLiteral(red: 0.721568644, green: 0.8862745166, blue: 0.5921568871, alpha: 1)
-        $0.contentEdgeInsets = UIEdgeInsets(top: 10, left: 20, bottom: 10, right: 20)
+        var configuration = UIButton.Configuration.filled()
+        configuration.title = "Browse categories"
+        configuration.baseBackgroundColor = #colorLiteral(red: 0.721568644, green: 0.8862745166, blue: 0.5921568871, alpha: 1)
+        configuration.baseForegroundColor = #colorLiteral(red: 0.1294117719, green: 0.2156862766, blue: 0.06666667014, alpha: 1)
+        configuration.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 20, bottom: 10, trailing: 20)
         
         let buttonAction = UIAction { [weak self] _ in
                      self?.showCategoriesViewAction()
                 }
+        
+        $0.configuration = configuration
         
         $0.addAction(buttonAction, for: .touchUpInside)
         
@@ -127,7 +130,7 @@ final class NewsAppViewControllerImpl: UIViewController {
 
 extension NewsAppViewControllerImpl: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        guard let keywords = searchBar.text, !keywords.isEmpty else { return }
+        guard let keywords = searchBar.text?.lowercased(), !keywords.isEmpty else { return }
         presenter.searchNews(by: keywords)
         searchBar.resignFirstResponder()
     }
